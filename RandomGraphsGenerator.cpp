@@ -3,14 +3,25 @@
 * 1. G1 : Average vertex degree is 6
 * 2. G2 : Each vertex adjacent to 20% of other vertices
 *         randomly chosen.
+*
+* Procedure:
+* 1. The graph is represented as an adjacency list.
+* 2. The adjacency list is created using an array of
+*    Linked list.
+*
+*
 *********************************************************/
 
 #include <iostream>
 #include <math.h>
 #include <string.h>
+#include <time.h>
 
 #define NUMBER_OF_VERTICES 5000
 #define NUMBER_OF_EDGES_PER_VERTEX_AVG 6
+
+#define INSERT_DEBUG_OUTPUT 0
+#define DISPLAY_DEBUG_OUTPUT 1
 
 using namespace std;
 
@@ -54,7 +65,9 @@ class LinkedList{
 
       if(root)
       {
+        #if INSERT_DEBUG_OUTPUT
         cout<<"Adding new elements"<<endl;
+        #endif
         tail->NextNode=tempNode;
         tail=tempNode;
       }
@@ -63,7 +76,9 @@ class LinkedList{
         root=tempNode;
         tail=tempNode;
         tempNode=NULL;
-        cout<<"New root added"<<endl;
+        #if INSERT_DEBUG_OUTPUT
+        cout<<"New root added : "<<val<<endl;
+        #endif
       }
 
     }
@@ -71,15 +86,15 @@ class LinkedList{
     void display()
     {
       SingleLinkedListNode<T> *tempNode=new SingleLinkedListNode<T>;
-      tempNode=root;
+      tempNode=this->root;
       unsigned int i=0;
-      cout<<"\n"<<endl;
+      //cout<<"\n"<<endl;
       while(tempNode!=NULL)
       {
-        cout<<tempNode->data<<"\t";
+        cout<<tempNode->data<<" -> ";
         tempNode=tempNode->NextNode;
       }
-      cout<<endl;
+      cout<<"\n";
     }
 
 };
@@ -87,7 +102,7 @@ class LinkedList{
 int main(){
 
   LinkedList<int> *SingleLinkedListNodes1 = new LinkedList<int>[10];
-  
+
   SingleLinkedListNodes1[0].insert(3);
   SingleLinkedListNodes1[0].insert(5);
   SingleLinkedListNodes1[0].insert(8);
@@ -95,7 +110,55 @@ int main(){
   SingleLinkedListNodes1[0].insert(69);
   SingleLinkedListNodes1[1].insert(68);
   SingleLinkedListNodes1[1].insert(76);
+  SingleLinkedListNodes1[2].insert(89);
+  SingleLinkedListNodes1[3].insert(49);
   SingleLinkedListNodes1[0].display();
   SingleLinkedListNodes1[1].display();
+  SingleLinkedListNodes1[2].display();
+  SingleLinkedListNodes1[3].display();
+
+  /* Creating a graph of 5000 nodes as an adjacency list */
+  LinkedList<int> *Graph_ = new LinkedList<int>[NUMBER_OF_VERTICES];
+
+  /* Construct a cycle of connected nodes */
+  for(unsigned int i = 0;i<NUMBER_OF_VERTICES;i++)
+  {
+    if(i==(NUMBER_OF_VERTICES-1))
+    {
+      Graph_[i].insert(0);
+      continue;
+    }
+    Graph_[i].insert(i+1);
+  }
+
+  #if DISPLAY_DEBUG_OUTPUT
+  for(unsigned int i = 0;i<NUMBER_OF_VERTICES;i++)
+  {
+    cout<<i<<"->";
+    Graph_[i].display();
+  }
+  #endif
+
+  /* Using current time as seed for random generator */
+  srand(time(0));
+
+  /* Add 6 vertices randomly to every vertex */
+  for(unsigned int i = 0;i<NUMBER_OF_VERTICES;i++)
+  {
+    for(unsigned int NV = 0;NV<NUMBER_OF_EDGES_PER_VERTEX_AVG;NV++)
+    {
+      Graph_[i].insert(rand()%NUMBER_OF_VERTICES);
+    }
+
+  }
+
+  #if DISPLAY_DEBUG_OUTPUT
+  for(unsigned int i = 0;i<NUMBER_OF_VERTICES;i++)
+  {
+    cout<<i<<" -> ";
+    Graph_[i].display();
+  }
+  #endif
+
 
 }
