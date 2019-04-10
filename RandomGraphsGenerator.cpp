@@ -123,8 +123,53 @@ class LinkedList{
 
     }
 
+    friend class Graph;
+
 };
 
+template<class T>
+class Graph
+{
+private:
+  LinkedList<T> *Graph_11 = new LinkedList<T>[NUMBER_OF_VERTICES];
+  LinkedList<T> *Graph_22 = new LinkedList<T>[NUMBER_OF_VERTICES];
+
+public:
+  Graph GenerateGraphWith6AvgVertices()
+  {
+    /* Construct a cycle of connected nodes */
+    for(unsigned int i = 0;i<NUMBER_OF_VERTICES;i++)
+    {
+      if(i==(NUMBER_OF_VERTICES-1))
+      {
+        Graph_11[i].insert(0);
+        continue;
+      }
+      Graph_11[i].insert(i+1);
+    }
+
+    /* Using current time as seed for random generator */
+    srand(time(0));
+
+    /* Add 6 vertices randomly to every vertex */
+    for(unsigned int i = 0;i<((NUMBER_OF_VERTICES/2)+200);i++)
+    {
+      for(unsigned int NV = 0;NV<((NUMBER_OF_EDGES_PER_VERTEX_AVG));NV++)
+      {
+
+        if(Graph_11[i].count() <= 6)
+        {
+          int NumbVertices = rand()%NUMBER_OF_VERTICES;
+          Graph_11[i].insert(NumbVertices);
+          Graph_11[NumbVertices].insert(i);
+        }
+
+      }
+
+    }
+
+  }
+};
 
 
 int main(){
@@ -216,7 +261,7 @@ int main(){
   #endif
 
   std::vector<int> ArrayCount;
-  
+
   #if DISPLAY_DEBUG_COUNT
   for(unsigned int i = 0;i<NUMBER_OF_VERTICES;i++)
   {
