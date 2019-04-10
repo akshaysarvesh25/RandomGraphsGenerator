@@ -216,6 +216,7 @@ int main(){
   #endif
 
   std::vector<int> ArrayCount;
+  
   #if DISPLAY_DEBUG_COUNT
   for(unsigned int i = 0;i<NUMBER_OF_VERTICES;i++)
   {
