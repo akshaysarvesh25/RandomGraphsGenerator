@@ -65,16 +65,18 @@ class LinkedList{
     SingleLinkedListNode<T> *root, *tail;
 
   public:
-    void insert(T val){
+    void insert(T val,T EdgeWeight)
+    {
 
       SingleLinkedListNode<T> *tempNode=new SingleLinkedListNode<T>;
       tempNode->data=val;
+      tempNode->weight = EdgeWeight;
       tempNode->NextNode=NULL;
 
       if(root)
       {
         #if INSERT_DEBUG_OUTPUT
-        cout<<"Adding new elements"<<endl;
+        cout<<"Adding new elements "<<endl;
         #endif
         tail->NextNode=tempNode;
         tail=tempNode;
@@ -134,15 +136,21 @@ int main(){
   /* Creating a graph of 5000 nodes as an adjacency list */
   LinkedList<int> *Graph_ = new LinkedList<int>[NUMBER_OF_VERTICES];
 
+  /* Using current time as seed for random generator */
+  srand(time(0));
+
   /* Construct a cycle of connected nodes */
   for(unsigned int i = 0;i<NUMBER_OF_VERTICES;i++)
   {
+    unsigned int weight_insert = rand()%1000000;
     if(i==(NUMBER_OF_VERTICES-1))
     {
-      Graph_[i].insert(0);
+      Graph_[i].insert(i,9999999);
+      Graph_[i].insert(0,weight_insert);
       continue;
     }
-    Graph_[i].insert(i+1);
+    Graph_[i].insert(i,9999999);
+    Graph_[i].insert(i+1,weight_insert);
   }
 
   #if DISPLAY_DEBUG_OUTPUT
@@ -153,24 +161,18 @@ int main(){
   }
   #endif
 
-  /* Using current time as seed for random generator */
-  srand(time(0));
-
   /* Add 6 vertices randomly to every vertex */
-  for(unsigned int i = 0;i<((NUMBER_OF_VERTICES/2)+200);i++)
+  for(unsigned int i = 0;i<NUMBER_OF_VERTICES;i++)
   {
-    for(unsigned int NV = 0;NV<((NUMBER_OF_EDGES_PER_VERTEX_AVG));NV++)
+    for(unsigned int NV = 0;NV<(NUMBER_OF_VERTICES);NV++)
     {
-
-      if(Graph_[i].count() <= 6)
+      if((rand()%5000)<=6)
       {
-        int NumbVertices = rand()%NUMBER_OF_VERTICES;
-        Graph_[i].insert(NumbVertices);
-        Graph_[NumbVertices].insert(i);
+        unsigned int weight_insert = rand()%1000000;
+        Graph_[i].insert(NV,weight_insert);
+        Graph_[NV].insert(i,weight_insert);
       }
-
     }
-
   }
 
   #if DISPLAY_DEBUG_OUTPUT
@@ -189,18 +191,39 @@ int main(){
   }
   #endif
 
+  std::vector<int> ArrayCount;
+  std::ofstream outfile_TS1;
+
 
   /* Add 20% of the vertices randomly to every vertex */
   /* Creating a graph of 5000 nodes as an adjacency list */
+
   LinkedList<int> *Graph_1 = new LinkedList<int>[NUMBER_OF_VERTICES];
+
+
+  /* Construct a cycle of connected nodes */
+  for(unsigned int i = 0;i<NUMBER_OF_VERTICES;i++)
+  {
+    unsigned int weight_insert = rand()%1000000;
+    if(i==(NUMBER_OF_VERTICES-1))
+    {
+      Graph_1[i].insert(i,9999999);
+      Graph_1[i].insert(0,weight_insert);
+      continue;
+    }
+    Graph_1[i].insert(i,9999999);
+    Graph_1[i].insert(i+1,weight_insert);
+  }
+
   for(unsigned int i = 0;i<NUMBER_OF_VERTICES;i++)
   {
     for(unsigned int NV = 0;NV<(NUMBER_OF_VERTICES);NV++)
     {
       if((rand()%100)<=9)
       {
-        Graph_1[i].insert(NV);
-        Graph_1[NV].insert(i);
+        unsigned int weight_insert = rand()%1000000;
+        Graph_1[i].insert(NV,weight_insert);
+        Graph_1[NV].insert(i,weight_insert);
       }
 
     }
@@ -215,8 +238,8 @@ int main(){
   }
   #endif
 
-  std::vector<int> ArrayCount;
-  
+  //std::vector<int> ArrayCount;
+
   #if DISPLAY_DEBUG_COUNT
   for(unsigned int i = 0;i<NUMBER_OF_VERTICES;i++)
   {
@@ -225,11 +248,9 @@ int main(){
   }
   #endif
 
-  std::ofstream outfile_TS1;
-  //std::ofstream outfile_TS2;
 
-  std::remove("ArrayCount.txt");
-  outfile_TS1.open("ArrayCount.txt", std::ios_base::app);
+  std::remove("GraphCount_Dense.txt");
+  outfile_TS1.open("GraphCount_Dense.txt", std::ios_base::app);
   for(unsigned int i = 0;i<ArrayCount.size();i++)
   {
     outfile_TS1<<std::setprecision(20)<<ArrayCount[i]<< std::endl;
